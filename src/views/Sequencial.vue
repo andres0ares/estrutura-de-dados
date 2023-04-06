@@ -1,35 +1,51 @@
 <template>
   <div class="main">
     <div>
-      <p class="text-h5">Lista Sequencial {{ count }}</p>
+      <p class="text-h5">Lista Sequencial {{ size_array }}</p>
       <v-slider
-        v-model="count"
+        v-model="size_array"
         class="slider"
         :max="30"
         :min="5"
         step="1"
       ></v-slider>
       <v-btn @click="handleTest" color="black">iniciar</v-btn>
+      <p>{{ index_array }}</p>
+      <v-slider
+        v-model="index_array"
+        class="slider"
+        :max="size_array"
+        :min="0"
+        step="1"
+      ></v-slider>
     </div>
     <div>
-      <div v-for="box in array" class="float-left box">
-        <p>{{ box.value }} - {{ box.idx }}</p>
+      <div v-for="box, idx in array" class="float-left">
+        <Box type="seq" :value="box.value" :idx="idx" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
+import Box from '@/components/Box.vue';
+
 export default {
   data() {
     return {
-      count: 0,
+      size_array: 0,
+      index_array: 0,
       array: [], 
     };
   },
+  components: {
+    Box,
+  },
   methods: {
     handleTest() {
-      for (let i = 0; i < this.count; i++)
+        this.array = [];
+      for (let i = 0; i < this.size_array; i++)
         this.array.push({ value: "none", idx: i });
     },
   },
@@ -52,7 +68,5 @@ export default {
   width: 200px;
 }
 
-.box {
-  border: 2px solid black;
-}
+
 </style>
