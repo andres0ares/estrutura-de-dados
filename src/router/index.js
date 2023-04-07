@@ -18,6 +18,11 @@ const routes = [
         path: '/sequencial',
         name: 'Sequencial',
         component: () => import('@/views/Sequencial.vue'),
+      },
+      {
+        path: '/simplesmente-encadeada',
+        name: 'Simplesmente Encadeada',
+        component: () => import('@/views/SimplesmenteEncadeada.vue'),
       }
     ],
   },
