@@ -42,7 +42,8 @@ export default {
 
 <style scoped>
 .main {
-  background-color: #263238;
+  /* background-color: #263238; */
+  background-color: #eaeaea;
   min-height: 100vh;
   padding: 4rem 0;
   flex: 1;

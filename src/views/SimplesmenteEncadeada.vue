@@ -1,110 +1,211 @@
 <template>
   <div class="main">
-    <SetSeq @update-size-array="createArray" @update-element="updateElement" />
-    <div>
-      <v-card v-if="array.length > 0" class="pa-4 mt-6" color="#ECEFF1">
-        <div v-for="(value, idx) in array" class="float-left">
-          <Box type="enc" :value="value" :idx="idx" />
-        </div>
-      </v-card>
-      <div class="test">
-        <v-network-graph :nodes="nodes" :edges="edges" :configs="config">
-          <!-- Replace the node component -->
-          <template #override-node="{ nodeId, scale, config, ...slotProps }">
-            <rect
-              :width="60 * scale"
-              :height="40 * scale"
-              :x="-30 * scale"
-              :y="-20 * scale"
-              :rx="config.borderRadius * scale"
-              :ry="config.borderRadius * scale"
-              :fill="config.color"
-              :stroke="config.strokeColor"
-              :stroke-width="config.strokeWidth * scale"
-              v-bind="slotProps"
-            />
-            <!-- Use v-html to interpret escape sequences for icon characters. -->
-            <text
-              font-family="Material Icons"
-              :font-size="22 * scale"
-              fill="#000000"
-              text-anchor="middle"
-              dominant-baseline="central"
-              style="pointer-events: none"
-              v-html="nodes[nodeId].icon"
-            />
-          </template>
-        </v-network-graph>
-      </div>
-    </div>
+    <SetSimEnc @push="push" @edit="edit" @pop="pop" :idxs="nodeArray.length" />
+    <SimEncDisplay :nodes="nodes" :edges="edges" />
   </div>
 </template>
 
 <script>
 import Box from "@/components/Box.vue";
-import SetSeq from "@/components/SetSeq.vue";
-import { VNetworkGraph } from "v-network-graph";
-import "v-network-graph/lib/style.css";
+import SetSimEnc from "@/components/SetSimEnc.vue";
+import SimEncDisplay from "@/components/SimEncDisplay.vue";
 
 export default {
   data() {
     return {
       index_array: 0,
-      array: [],
-      nodes: {
-        node1: { name: "Node 1" },
-        node2: { name: "Node 2" },
-        node3: { name: "Node 3" },
-        node4: { name: "Node 4" },
-      },
-      edges: {
-        edge1: { source: "node1", target: "node2" },
-        edge2: { source: "node2", target: "node3" },
-        edge3: { source: "node3", target: "node4" },
-      },
-      config: {
-        node: {
-          normal: {
-            type: "rect",
-            width: 60,
-            height: 32,
-            borderRadius: 8,
-            color: "#eaeaea",
-            strokeWidth: 1,
-            strokeColor: "#000000",
-          },
-        },
-        edge: {
-          marker: {
-            target: {
-              type: "arrow",
-              width: 4,
-              height: 4,
-              margin: -1,
-              units: "strokeWidth",
-              color: null,
-            },
-          },
-        },
-      },
+      nodeArray: [
+        // {key: '2', value: {name: '2'}},
+        // {key: '1', value: {name: '1'}}
+      ],
+      edgeArray: [],
+      nodes: {},
+      edges: {},
     };
   },
   components: {
     Box,
-    SetSeq,
-    VNetworkGraph,
+    SetSimEnc,
+    SimEncDisplay,
   },
   methods: {
-    createArray(size) {
-      this.nodes = {};
-
-      for (let i = 0; i < size; i++) {
-        this.nodes[`node${i}`] = { name: `Node ${i}`, icon: "&#128142;" };
+    push(value, idx) {
+      if (this.edgeArray.length > 0 && idx > 1) {
+        this.animatePath(this.edgeArray, idx - 1);
+        setTimeout(() => {
+          this.add(value, idx);
+        }, idx * 1000);
+      } else {
+        this.add(value, idx);
       }
     },
-    updateElement(index, value) {
-      this.array[index] = value;
+    pop(idx) {
+      if (this.edgeArray.length > 0 && idx > 0) {
+        this.animatePath(this.edgeArray, idx);
+        setTimeout(() => {
+          this.deleteItem(idx);
+        }, idx * 1000);
+      } else {
+        console.log(idx);
+      }
     },
+    edit(value, idx) {
+      if (this.edgeArray.length > 0 && idx > 0) {
+        this.animatePath(this.edgeArray, idx);
+        setTimeout(() => {
+          this.nodeArray[idx].value.icon = value;
+          this.updateNode(this.nodeArray);
+        }, idx * 1000);
+      } else {
+        this.nodeArray[idx].value.icon = value;
+        this.updateNode(this.nodeArray);
+      }
+    },
+    deleteItem(idx) {
+      if (idx > 0) {
+        if (idx < this.nodeArray.length - 1) {
+          this.setPath(idx, idx - 1, idx + 1);
+          setTimeout(() => {
+            this.removePath(
+              this.nodeArray[idx - 1].key,
+              this.nodeArray[idx].key
+            );
+            this.removePath(
+              this.nodeArray[idx].key,
+              this.nodeArray[idx + 1].key
+            );
+            setTimeout(() => {
+              this.nodeArray.splice(idx, 1);
+              this.updateNode(this.nodeArray);
+              this.updateNames();
+            }, 1000);
+          }, 1000);
+        } else {
+          this.removePath(this.nodeArray[idx - 1].key, this.nodeArray[idx].key);
+          setTimeout(() => {
+            this.nodeArray.splice(idx, 1);
+            this.updateNode(this.nodeArray);
+            this.updateNames();
+          }, 1000);
+        }
+      } else if (this.nodeArray.length > 1) {
+        this.removePath(this.nodeArray[idx].key, this.nodeArray[idx + 1].key);
+        setTimeout(() => {
+          this.nodeArray.splice(idx, 1);
+          this.updateNode(this.nodeArray);
+          this.updateNames();
+        }, 1000);
+      } else {
+        this.nodeArray.splice(idx, 1);
+        this.updateNode(this.nodeArray);
+        this.updateNames();
+      }
+    },
+    add(value, idx) {
+      //pega maior número de nó
+      const max =
+        this.nodeArray.length > 0
+          ? Math.max(...this.nodeArray.map((e) => Number(e.key))) + 1
+          : 1; //
+      let node = { key: `${max}`, value: { name: ``, icon: value } };
+      this.nodeArray.splice(idx, 0, node);
+
+      this.updateNode(this.nodeArray);
+
+      setTimeout(() => {
+        if (idx > 0) {
+          this.setPath(idx, idx - 1, idx);
+          if (idx < this.nodeArray.length - 1) {
+            setTimeout(() => {
+              this.setPath(idx, idx, idx + 1);
+              setTimeout(() => {
+                this.removePath(
+                  this.nodeArray[idx - 1].key,
+                  this.nodeArray[idx + 1].key
+                );
+                this.updateNames();
+              }, 1000);
+            }, 1000);
+          } else {
+            this.updateNames();
+          }
+        } else if (idx < this.nodeArray.length - 1) {
+          this.setPath(idx, idx, idx + 1);
+          this.updateNames();
+        } else {
+          this.updateNames();
+        }
+      }, 1000);
+    },
+    removePath(source, target) {
+      let idx = this.edgeArray.findIndex((e) => {
+        return e.value.source == source && e.value.target == target;
+      });
+      this.edgeArray.splice(idx, 1);
+      this.updateEdge(this.edgeArray);
+    },
+    setPath(idx, source, target) {
+      const max =
+        this.edgeArray.length > 0
+          ? Math.max(...this.edgeArray.map((e) => Number(e.key))) + 1
+          : 1; //
+      this.edgeArray.splice(idx, 0, {
+        key: `${max}`,
+        value: {
+          source: this.nodeArray[source].key,
+          target: this.nodeArray[target].key,
+        },
+      });
+      this.updateEdge(this.edgeArray);
+    },
+    updateNames() {
+      this.nodeArray.forEach((e, idx) => {
+        e.value.name = `${idx}`;
+      });
+      this.updateNode(this.nodeArray);
+    },
+    animatePath(array, end) {
+      let test = JSON.parse(JSON.stringify(array));
+
+      let j = 0;
+
+      function delay(i, updateEdge, size) {
+        console.log("here", i);
+        test[i].value.animate = true;
+        updateEdge(test);
+        setTimeout(() => {
+          console.log("here2", i);
+          console.log(test);
+          test[i].value.animate = false;
+          // if (i > 0) test[i - 1].value.animate = false;
+
+          updateEdge(test);
+          console.log(array[i]);
+          i++;
+          if (i < size) {
+            delay(i, updateEdge, size);
+          }
+        }, 1000);
+      }
+
+      delay(j, this.updateEdge, end);
+    },
+    updateNode(array) {
+      this.nodes = {};
+      array.forEach((e) => {
+        this.nodes[e.key] = e.value;
+      });
+    },
+    updateEdge(array) {
+      this.edges = {};
+      array.forEach((e) => {
+        this.edges[e.key] = e.value;
+      });
+    },
+  },
+  mounted() {
+    this.updateEdge(this.edgeArray);
+    this.updateNode(this.nodeArray);
   },
 };
 </script>
@@ -120,20 +221,8 @@ export default {
 .main {
   background-color: #263238;
   min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   background-image: url("https://www.transparenttextures.com/patterns/swirl.png");
   background-repeat: repeat;
-}
-
-.test {
-  background-color: rgba(red, green, blue, 0.1);
-  width: 90vw;
-  height: 30vh;
 }
 
 .slider {

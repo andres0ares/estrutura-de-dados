@@ -11,40 +11,6 @@
       <p class="text-caption">{{ idx }}</p>
     </div>
   </div>
-
-  <div v-if="type == 'enc'">
-    <div v-if="transition" class="box-transition px-2">
-      <p>{{ idx }}</p>
-    </div>
-    <div v-else >
-      <v-row no-gutters class="enc-box-main">
-        <v-col cols="7">
-          <div class="enc-box-s enc-1">
-            <p>enc</p>
-            <v-icon v-if="value == 'diamond'" icon="mdi-diamond"></v-icon>
-            <v-icon v-else-if="value == 'bomb'" icon="mdi-bomb"></v-icon>
-        </div></v-col>
-        <v-col cols="5">
-          <div class="enc-box-s enc-2">
-            <p>{{ idx+1 }}</p>
-        </div></v-col>
-      </v-row>
-      <!-- <div class="box px-2">
-        <p>enc</p>
-        <v-icon v-if="value == 'diamond'" icon="mdi-diamond"></v-icon>
-        <v-icon v-else-if="value == 'bomb'" icon="mdi-bomb"></v-icon>
-      </div>
-      <div class="box px-2">
-        <p>enc</p>
-        <v-icon v-if="value == 'diamond'" icon="mdi-diamond"></v-icon>
-        <v-icon v-else-if="value == 'bomb'" icon="mdi-bomb"></v-icon>
-      </div> -->
-    </div>
-
-    <div>
-      <p class="text-caption">{{ idx }}</p>
-    </div>
-  </div>
 </template>
 
 <script>
