@@ -144,10 +144,15 @@ export default {
       let idx = this.edgeArray.findIndex((e) => {
         return e.value.source == source && e.value.target == target;
       });
+      let idx2 = this.edgeArray2.findIndex((e) => {
+        return e.value.source == target && e.value.target == source;
+      });
+      
       this.edgeArray.splice(idx, 1);
-      this.edgeArray2.splice(idx, 1);
-      this.updateEdge(this.edgeArray);
+      this.edgeArray2.splice(idx2, 1);
+      this.updateEdge([...this.edgeArray, ...this.edgeArray2]);
     },
+    
     setPath(idx, source, target) {
       const max =
         this.edgeArray.length > 0
