@@ -13,11 +13,13 @@ export default {
   data() {
     return {
       index_array: 0,
+      array: [],
       nodeArray: [
         // {key: '2', value: {name: '2'}},
         // {key: '1', value: {name: '1'}}
       ],
       edgeArray: [],
+      edgeArray2: [],
       nodes: {},
       edges: {},
     };
@@ -29,31 +31,34 @@ export default {
   methods: {
     push(value, idx) {
       if (this.edgeArray.length > 0 && idx > 1) {
-        this.animatePath(this.edgeArray, idx - 1);
+        this.animatePath(idx - 1);
+        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.add(value, idx);
-        }, idx * 1000);
+        }, wait * 1000);
       } else {
         this.add(value, idx);
       }
     },
     pop(idx) {
       if (this.edgeArray.length > 0 && idx > 0) {
-        this.animatePath(this.edgeArray, idx);
+        this.animatePath(idx);
+        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.deleteItem(idx);
-        }, idx * 1000);
+        }, wait * 1000);
       } else {
         console.log(idx);
       }
     },
     edit(value, idx) {
       if (this.edgeArray.length > 0 && idx > 0) {
-        this.animatePath(this.edgeArray, idx);
+        this.animatePath(idx);
+        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.nodeArray[idx].value.icon = value;
           this.updateNode(this.nodeArray);
-        }, idx * 1000);
+        }, wait * 1000);
       } else {
         this.nodeArray[idx].value.icon = value;
         this.updateNode(this.nodeArray);
@@ -140,6 +145,7 @@ export default {
         return e.value.source == source && e.value.target == target;
       });
       this.edgeArray.splice(idx, 1);
+      this.edgeArray2.splice(idx, 1);
       this.updateEdge(this.edgeArray);
     },
     setPath(idx, source, target) {
@@ -154,7 +160,17 @@ export default {
           target: this.nodeArray[target].key,
         },
       });
-      this.updateEdge(this.edgeArray);
+
+      this.edgeArray2.splice(idx, 0, {
+        key: `${max}`,
+        value: {
+          source: this.nodeArray[target].key,
+          target: this.nodeArray[source].key,
+        },
+      });
+
+      console.log("setpath", [...this.edgeArray, ...this.edgeArray2]);
+      this.updateEdge([...this.edgeArray, ...this.edgeArray2]);
     },
     updateNames() {
       this.nodeArray.forEach((e, idx) => {
@@ -162,13 +178,24 @@ export default {
       });
       this.updateNode(this.nodeArray);
     },
-    animatePath(array, end) {
-      let test = JSON.parse(JSON.stringify(array));
+    animatePath(idx) {
+      let test1 = JSON.parse(
+        JSON.stringify([...this.edgeArray, ...this.edgeArray2])
+      );
+      let test2 = JSON.parse(
+        JSON.stringify([...this.edgeArray2.reverse(), ...this.edgeArray])
+      );
+
+      let test = idx < (this.nodeArray.length - 1) / 2 ? test1 : test2;
+      idx =
+        idx < (this.nodeArray.length - 1) / 2
+          ? idx
+          : this.nodeArray.length - 1 - idx;
 
       let j = 0;
 
       function delay(i, updateEdge, size) {
-        console.log("here", i);
+        console.log("size", size);
         test[i].value.animate = true;
         updateEdge(test);
         setTimeout(() => {
@@ -178,15 +205,17 @@ export default {
           // if (i > 0) test[i - 1].value.animate = false;
 
           updateEdge(test);
-          console.log(array[i]);
+          // console.log(array[i]);
           i++;
           if (i < size) {
             delay(i, updateEdge, size);
+          }else{
+            updateEdge([...this.edgeArray, ...this.edgeArray2])
           }
         }, 1000);
       }
 
-      delay(j, this.updateEdge, end);
+      if (idx > 0) delay(j, this.updateEdge, idx);
     },
     updateNode(array) {
       this.nodes = {};
@@ -196,8 +225,8 @@ export default {
     },
     updateEdge(array) {
       this.edges = {};
-      array.forEach((e) => {
-        this.edges[e.key] = e.value;
+      array.forEach((e, idx) => {
+        this.edges[idx] = e.value;
       });
     },
   },

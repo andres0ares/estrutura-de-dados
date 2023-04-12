@@ -23,6 +23,11 @@ const routes = [
         path: '/simplesmente-encadeada',
         name: 'Simplesmente Encadeada',
         component: () => import('@/views/SimplesmenteEncadeada.vue'),
+      },
+      {
+        path: '/duplamente-encadeada',
+        name: 'Duplamente Encadeada',
+        component: () => import('@/views/DuplamenteEncadeada.vue'),
       }
     ],
   },

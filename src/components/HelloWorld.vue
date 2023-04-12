@@ -3,8 +3,11 @@
     <v-btn class="blue" @click="openSequencial" color="blue"
       >Lista Sequencial</v-btn
     >
-    <v-btn class="blue" @click="openSimplesmenteEncadeada" color="blue"
+    <v-btn class="blue my-4" @click="openSimplesmenteEncadeada" color="blue"
       >Lista Simplesmente Encadeada</v-btn
+    >
+    <v-btn class="blue" @click="openDuplamenteEncadeada" color="blue"
+      >Lista Duplamente Encadeada</v-btn
     >
   </div>
 </template>
@@ -17,6 +20,9 @@ export default {
     },
     openSimplesmenteEncadeada() {
       this.$router.push({ path: "/simplesmente-encadeada" });
+    },
+    openDuplamenteEncadeada() {
+      this.$router.push({ path: "/duplamente-encadeada" });
     },
   },
 };
