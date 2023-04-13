@@ -135,7 +135,7 @@ export default {
   right: 50px;
   z-index: 3;
   position: fixed;
-  background-color: aqua;
+  background-color: #f5470b;
   border-radius: 30px;
   width: 60px;
   height: 60px;
