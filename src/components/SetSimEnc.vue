@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card v-if="expand" class="pa-4 main-card-sim" max-width="374" color="#ECEFF1">
+    <v-card v-if="expand" class="pa-4 main-card-sim" max-width="374" color="#f5f5f5">
       <v-icon  @click="toggleExpand" class="float-right" icon="mdi-chevron-up"></v-icon>
       <v-card-title class="mt-4"> Lista Simplesmente Encadeada </v-card-title>
       <div class="mb-2">
@@ -10,7 +10,7 @@
           :id="btn.id"
           :variant="btn.id == option ? 'flat' : 'outlined'"
           @click="handleClickOption"
-          :color="default_color"
+          :color="primary_color"
           class="mr-2"
           ><v-icon :icon="btn.icon"></v-icon
         ></v-btn>
@@ -37,7 +37,7 @@
             :max="idxs"
             :min="0"
             step="1"
-            :color="default_color"
+            :color="primary_color"
           ></v-slider>
         </div>
 
@@ -49,7 +49,7 @@
           ]"
         />
 
-        <v-btn size="small" @click="push" :color="default_color" class="mt-2"
+        <v-btn size="small" @click="push" :color="primary_color" class="mt-2"
           >Adicionar</v-btn
         >
       </div>
@@ -76,7 +76,7 @@
             :max="idxs - 1"
             :min="0"
             step="1"
-            :color="default_color"
+            :color="primary_color"
           ></v-slider>
         </div>
 
@@ -86,7 +86,7 @@
           ]"
         />
 
-        <v-btn size="small" @click="edit" :color="default_color" class="mt-2"
+        <v-btn size="small" @click="edit" :color="primary_color" class="mt-2"
           >editar</v-btn
         >
       </div>
@@ -101,7 +101,7 @@
             :max="idxs - 1"
             :min="0"
             step="1"
-            :color="default_color"
+            :color="primary_color"
           ></v-slider>
 
           <CodeDisplay :texts="[`lista.pop(${idx_edit});`]" />
@@ -109,7 +109,7 @@
           <v-btn
             size="small"
             @click="deletar"
-            :color="default_color"
+            :color="primary_color"
             class="mt-2"
             >deletar</v-btn
           >
@@ -131,7 +131,8 @@ export default {
       idx: 0,
       idx_edit: 0,
       expand: true,
-      default_color: "blue-grey-darken-4",
+      primary_color: "blue-grey-darken-4",
+      secondary_color: "#f5470b",
       option: "add",
       options: [{id: 'add', icon: 'mdi-plus'}, {id: 'edit', icon: 'mdi-pencil'}, {id: 'delete', icon: 'mdi-delete'}, {id: 'search', icon: 'mdi-magnify'}],
       value: "💎",
@@ -180,6 +181,7 @@ export default {
   right: 50px;
   z-index: 3;
   position: fixed;
+  border: 2px solid black;
 }
 
 .expand {
@@ -205,8 +207,8 @@ export default {
   position: relative;
   height: 40px;
   min-width: 40px;
-  border-radius: 20px;
-  border: 2px solid red;
+  border-radius: 10px;
+  border: 2px solid #263238;
   margin: 0 5px 5px 0;
   flex: 1;
   display: flex;
@@ -217,7 +219,8 @@ export default {
 }
 
 .select-value:hover {
-  background-color: red;
+  border: 2px solid #f5470b;
+  background-color: #f5470b;
 }
 
 .select-group{

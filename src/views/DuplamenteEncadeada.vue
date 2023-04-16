@@ -32,7 +32,10 @@ export default {
     push(value, idx) {
       if (this.edgeArray.length > 0 && idx > 1) {
         this.animatePath(idx - 1);
-        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
+        let wait =
+          idx < (this.nodeArray.length - 1) / 2
+            ? idx
+            : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.add(value, idx);
         }, wait * 1000);
@@ -43,7 +46,10 @@ export default {
     pop(idx) {
       if (this.edgeArray.length > 0 && idx > 0) {
         this.animatePath(idx);
-        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
+        let wait =
+          idx < (this.nodeArray.length - 1) / 2
+            ? idx
+            : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.deleteItem(idx);
         }, wait * 1000);
@@ -54,7 +60,10 @@ export default {
     edit(value, idx) {
       if (this.edgeArray.length > 0 && idx > 0) {
         this.animatePath(idx);
-        let wait = idx < (this.nodeArray.length - 1) / 2 ? idx : this.nodeArray.length - 1 - idx;
+        let wait =
+          idx < (this.nodeArray.length - 1) / 2
+            ? idx
+            : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.nodeArray[idx].value.icon = value;
           this.updateNode(this.nodeArray);
@@ -117,10 +126,12 @@ export default {
 
       setTimeout(() => {
         if (idx > 0) {
+          //adiciona ponteiro do anterior para o atual
           this.setPath(idx, idx - 1, idx);
           if (idx < this.nodeArray.length - 1) {
             setTimeout(() => {
-              this.setPath(idx, idx, idx + 1);
+              //adiciona ponteiro para o proximo item
+              this.setPath(idx + 1, idx, idx + 1);
               setTimeout(() => {
                 this.removePath(
                   this.nodeArray[idx - 1].key,
@@ -133,6 +144,7 @@ export default {
             this.updateNames();
           }
         } else if (idx < this.nodeArray.length - 1) {
+          //adiciona ponteiro para inicio da lista
           this.setPath(idx, idx, idx + 1);
           this.updateNames();
         } else {
@@ -147,12 +159,12 @@ export default {
       let idx2 = this.edgeArray2.findIndex((e) => {
         return e.value.source == target && e.value.target == source;
       });
-      
+
       this.edgeArray.splice(idx, 1);
       this.edgeArray2.splice(idx2, 1);
       this.updateEdge([...this.edgeArray, ...this.edgeArray2]);
     },
-    
+
     setPath(idx, source, target) {
       const max =
         this.edgeArray.length > 0
@@ -166,7 +178,7 @@ export default {
         },
       });
 
-      this.edgeArray2.splice(idx, 0, {
+      this.edgeArray2.splice(this.edgeArray2 - 1 - idx, 0, {
         key: `${max}`,
         value: {
           source: this.nodeArray[target].key,
@@ -184,43 +196,71 @@ export default {
       this.updateNode(this.nodeArray);
     },
     animatePath(idx) {
-      let test1 = JSON.parse(
-        JSON.stringify([...this.edgeArray, ...this.edgeArray2])
-      );
-      let test2 = JSON.parse(
-        JSON.stringify([...this.edgeArray2.reverse(), ...this.edgeArray])
-      );
+      // let test1 = JSON.parse(
+      //   JSON.stringify([...this.edgeArray, ...this.edgeArray2])
+      // );
+      // let test2 = JSON.parse(
+      //   JSON.stringify([...this.edgeArray2, ...this.edgeArray])
+      // );
+      if (idx+1 < this.nodeArray.length) {
+        let test = this.getEdgeArray();
 
-      let test = idx < (this.nodeArray.length - 1) / 2 ? test1 : test2;
-      idx =
-        idx < (this.nodeArray.length - 1) / 2
-          ? idx
-          : this.nodeArray.length - 1 - idx;
+        let j = idx < (this.nodeArray.length - 1) / 2 ? 0 : test.length / 2;
 
-      let j = 0;
+        idx =
+          idx < (this.nodeArray.length - 1) / 2
+            ? idx
+            : this.nodeArray.length - 1 - idx + j;
 
-      function delay(i, updateEdge, size) {
-        console.log("size", size);
-        test[i].value.animate = true;
-        updateEdge(test);
-        setTimeout(() => {
-          console.log("here2", i);
-          console.log(test);
-          test[i].value.animate = false;
-          // if (i > 0) test[i - 1].value.animate = false;
+        console.log("test", j, idx, test);
 
+        function delay(i, updateEdge, size) {
+          test[i].value.animate = true;
           updateEdge(test);
-          // console.log(array[i]);
-          i++;
-          if (i < size) {
-            delay(i, updateEdge, size);
-          }else{
-            updateEdge([...this.edgeArray, ...this.edgeArray2])
-          }
-        }, 1000);
-      }
+          setTimeout(() => {
+            test[i].value.animate = false;
+            // if (i > 0) test[i - 1].value.animate = false;
 
-      if (idx > 0) delay(j, this.updateEdge, idx);
+            updateEdge(test);
+            // console.log(array[i]);
+            i++;
+            if (i < size) {
+              delay(i, updateEdge, size);
+            } else {
+              updateEdge([...this.edgeArray, ...this.edgeArray2]);
+            }
+          }, 1000);
+        }
+
+        if (idx > 0) delay(j, this.updateEdge, idx);
+      }
+    },
+    getEdgeArray() {
+      let test = [];
+      let idx = 1;
+      if (this.nodeArray.length > 0) {
+        for (let i = 1; i < this.nodeArray.length; i++) {
+          test.push({
+            key: `${idx}`,
+            value: {
+              source: this.nodeArray[i - 1].key,
+              target: this.nodeArray[i].key,
+            },
+          });
+          idx++;
+        }
+        for (let i = this.nodeArray.length - 1; i > 0; i--) {
+          test.push({
+            key: `${idx}`,
+            value: {
+              source: this.nodeArray[i].key,
+              target: this.nodeArray[i - 1].key,
+            },
+          });
+          idx++;
+        }
+      }
+      return test;
     },
     updateNode(array) {
       this.nodes = {};

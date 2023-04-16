@@ -1,7 +1,9 @@
 <template>
   <div class="fill-height main-h">
-    <p class="text-main">Estrutura de Dados</p>
-    <p class="txt-secondary">selecione um tipo de lista:</p>
+
+    <p class="text-main">Estrutura <span class="de">de</span>Dados</p>
+
+    <p class="txt-secondary my-3">selecione um tipo de lista:</p>
 
     <div @click="openSequencial" class="card-list">
       <p>Lista Sequencial</p>
@@ -15,7 +17,7 @@
       <p>Lista Duplamente Encadeada</p>
     </div>
     
-    <div>
+    <div class="mt-4">
       <v-btn icon="mdi-github" color="orange-darken-4"></v-btn>
       <v-btn icon="mdi-linkedin" class="mx-3" color="orange-darken-4"></v-btn>
       <v-btn icon="mdi-twitter" color="orange-darken-4"></v-btn>
@@ -43,9 +45,16 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Patua+One&display=swap");
 
 .text-main {
+  max-width: 400px;
+  line-height: 60px;
   font-family: "Patua One", cursive;
   font-size: 5rem;
   text-align: center;
+}
+
+.de {
+  font-size: 3rem;
+  vertical-align: top;
 }
 
 .txt-secondary {
@@ -55,9 +64,10 @@ export default {
 }
 
 .card-list {
+  font-family: "Patua One", cursive;
   border: 3px solid black;
-  width: 400px;
-  max-height: 100px;
+  width: 340px;
+  max-height: 80px;
   border-radius: 15px;
   cursor: pointer;
   flex: 1;
@@ -72,6 +82,7 @@ export default {
   background-color: #f5470b;
   color: white;
 }
+
 .main-h {
   /* background-color: #263238; */
   min-height: 100vh;

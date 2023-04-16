@@ -2,7 +2,7 @@
   <div class="main">
     <SetSeq @update-size-array="createArray" @update-element="updateElement"/>
     <div>
-      <v-card v-if="array.length > 0" class="pa-4 mt-6" color="#ECEFF1">
+      <v-card v-if="array.length > 0" class="pa-4 mt-6" color="#f5f5f5">
         <div v-for="value, idx in array" class="float-left">
           <Box type="seq" :value="value" :idx="idx" />
         </div>
@@ -43,7 +43,7 @@ export default {
 <style scoped>
 .main {
   /* background-color: #263238; */
-  background-color: #eaeaea;
+  background-color: #f5f5f5;
   min-height: 100vh;
   padding: 4rem 0;
   flex: 1;
@@ -51,7 +51,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url("https://www.transparenttextures.com/patterns/swirl.png");
   background-repeat: repeat;
 
 }

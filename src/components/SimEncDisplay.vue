@@ -51,9 +51,19 @@ export default {
             width: 60,
             height: 32,
             borderRadius: 8,
-            color: "#eaeaea",
-            strokeWidth: 1,
+            color: "#f5f5f5",
+            strokeWidth: 2,
             strokeColor: "#000000",
+          },
+          hover: {
+            width: 60,
+            height: 32,
+            borderRadius: 8,
+            // <-- for type is "rect"
+            strokeWidth: 0,
+            strokeColor: "#000000",
+            strokeDasharray: "0",
+            color: "#f5470b",
           },
         },
         edge: {
@@ -61,7 +71,7 @@ export default {
           type: "curve",
           normal: {
             width: (edge) => (edge.animate ? 3 : 2),
-            color: "#000000",
+            color: "#f5470b",
             dasharray: (edge) => (edge.animate ? "4" : "0"),
             animate: (edge) => !!edge.animate,
           },
@@ -92,6 +102,7 @@ export default {
 
 <style scoped>
 .test {
+  background-color: #f5f5f5;
   width: 100vw;
   height: 100vh;
 }

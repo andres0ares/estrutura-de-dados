@@ -112,10 +112,12 @@ export default {
 
       setTimeout(() => {
         if (idx > 0) {
+          //adiciona ponteiro do anterior para o atual
           this.setPath(idx, idx - 1, idx);
           if (idx < this.nodeArray.length - 1) {
             setTimeout(() => {
-              this.setPath(idx, idx, idx + 1);
+              //adiciona ponteiro para o proximo item
+              this.setPath(idx+1, idx, idx + 1);
               setTimeout(() => {
                 this.removePath(
                   this.nodeArray[idx - 1].key,
@@ -128,6 +130,7 @@ export default {
             this.updateNames();
           }
         } else if (idx < this.nodeArray.length - 1) {
+          //adiciona ponteiro para inicio da lista
           this.setPath(idx, idx, idx + 1);
           this.updateNames();
         } else {
@@ -147,6 +150,7 @@ export default {
         this.edgeArray.length > 0
           ? Math.max(...this.edgeArray.map((e) => Number(e.key))) + 1
           : 1; //
+      console.log('iix + list', idx, this.edgeArray, this.nodeArray)
       this.edgeArray.splice(idx, 0, {
         key: `${max}`,
         value: {
@@ -167,18 +171,15 @@ export default {
 
       let j = 0;
 
+      console.log('animate', test)
+
       function delay(i, updateEdge, size) {
-        console.log("here", i);
         test[i].value.animate = true;
         updateEdge(test);
         setTimeout(() => {
-          console.log("here2", i);
-          console.log(test);
           test[i].value.animate = false;
           // if (i > 0) test[i - 1].value.animate = false;
-
           updateEdge(test);
-          console.log(array[i]);
           i++;
           if (i < size) {
             delay(i, updateEdge, size);
@@ -217,10 +218,8 @@ export default {
     format("woff2");
 }
 .main {
-  background-color: #263238;
+  background-color: #f5f5f5;
   min-height: 100vh;
-  background-image: url("https://www.transparenttextures.com/patterns/swirl.png");
-  background-repeat: repeat;
 }
 
 .slider {
