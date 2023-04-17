@@ -17,6 +17,7 @@ import Box from '@/components/Box.vue';
 import SetSeq from '@/components/SetSeq.vue';
 
 export default {
+  name: 'Sequencial',
   data() {
     return {
       index_array: 0,

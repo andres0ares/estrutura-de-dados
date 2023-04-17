@@ -19,5 +19,7 @@ export default {
 }
 .p-code {
   font-size: small;
+  -moz-tab-size: 16; /* Firefox */
+  tab-size: 16;
 }
 </style>
