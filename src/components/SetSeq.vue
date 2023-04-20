@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card v-if="setArray" class="pa-4" max-width="374" color="#ECEFF1">
+    <v-card v-if="setArray" class="pa-4 border-1" max-width="374" color="#ECEFF1">
       <v-card-title> Lista Sequencial </v-card-title>
 
       <p class="mt-3">Selecione o tamanho da lista:</p>
@@ -27,7 +27,7 @@
     <div v-else>
       <v-card
         v-if="expand"
-        class="pa-4 main-card-sim"
+        class="pa-4 main-card-sim border-1"
         width="350"
         color="#ECEFF1"
       >
@@ -56,38 +56,24 @@
 
           <v-slider
             v-model="index_array"
-            class="slider"
+            class=""
             :max="size_array - 1"
             :min="0"
             step="1"
             :color="default_color"
           ></v-slider>
 
-          <p>Selecione valor:</p>
-
-          <div class="px-4">
-            <v-chip-group v-model="value">
-              <v-chip
-                value="diamond"
-                append-icon="mdi-diamond"
-                variant="elevated"
-                :color="default_color"
-              ></v-chip>
-              <v-chip
-                value="bomb"
-                append-icon="mdi-bomb"
-                variant="elevated"
-                :color="default_color"
-              ></v-chip>
-              <v-chip
-                value="null"
-                append-icon="mdi-delete"
-                variant="elevated"
-                :color="default_color"
-                >remover valor</v-chip
+          <p class="text-caption mt-n2">selecione o valor:</p>
+            <div class="select-group mb-2">
+              <div
+                v-for="item in values"
+                :id="item"
+                @click="handleClickValue"
+                class="select-value"
               >
-            </v-chip-group>
-          </div>
+                {{ item }}
+              </div>
+            </div>
 
           <CodeDisplay :texts="[`array[${index_array}] = ${value};`]" />
 
@@ -130,26 +116,27 @@
 
             <CodeDisplay :texts="[`print(array[${index_array}]);`]" />
 
-            <v-btn class="mt-4" size="small" :color="primary_color"
+            <v-btn @click="get" class="mt-4" size="small" :color="primary_color"
               >Pesquisar</v-btn
             >
           </div>
           <div v-if="searchOption == 'valor'">
+
             <p class="text-caption mt-4">selecione o valor:</p>
             <div class="select-group mb-2">
               <div
                 v-for="item in values"
                 :id="item"
-                @click="handleClick"
+                @click="handleClickValue"
                 class="select-value"
               >
                 {{ item }}
               </div>
             </div>
 
-            <CodeDisplay :texts="[`for(int i = 0; i < tamanho_array; i++) {`,`&emsp;if(array[i] == ${value}) {`, '&emsp;&emsp;print(array[i]);', '&emsp;&emsp;break;', '&emsp;}', '}']" />
+            <CodeDisplay :texts="[`for(int i = 0; i < tamanho_array; i++) {`,`&emsp;if(array[i] == ${value}) {`, `&emsp;&emsp;print('Encontrado na posição: ' + i);`, '&emsp;&emsp;break;', '&emsp;}',`&emsp;if(i == tamanho_array-1) {`,`&emsp;&emsp;print('Não encontrado.');`,'&emsp;}', '}']" />
 
-            <v-btn class="mt-4" size="small" :color="primary_color"
+            <v-btn @click="get" class="mt-4" size="small" :color="primary_color"
               >Pesquisar</v-btn
             >
           </div>
@@ -170,7 +157,7 @@ export default {
     return {
       size_array: 5,
       index_array: 5,
-      value: "X",
+      value: "💎",
       values: ["💎", "💣", "null"],
       setArray: true,
       selection: "",
@@ -194,6 +181,9 @@ export default {
       this.$emit("update-size-array", this.size_array);
       this.setArray = false;
     },
+    handleClickValue(e) {
+      this.value = e.currentTarget.id;
+    },
     sendUpdate(e) {
       if (this.value != undefined)
         this.$emit("update-element", this.index_array, this.value);
@@ -204,6 +194,20 @@ export default {
     toggleExpand() {
       this.expand = !this.expand;
     },
+    get() {
+      console.log('here', this.searchOption)
+      switch(this.searchOption){
+        case 'indice':
+          this.$emit("search-element", 'indice', this.index_array)
+          break
+        case 'valor':
+          this.$emit("search-element", 'valor', this.value)
+          break
+        default: 
+          break
+      }
+      
+    }
   },
 };
 </script>
@@ -214,6 +218,10 @@ export default {
   right: 50px;
   z-index: 3;
   position: fixed;
+}
+
+.border-1 {
+  border: 2px solid black;
 }
 
 .expand {
@@ -231,6 +239,17 @@ export default {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+  .main-card-sim{
+    top: 5px;
+    right: 5px;
+  }
+  .expand {
+    top: 5px;
+    right: 5px;
+  }
 }
 
 .select-value {

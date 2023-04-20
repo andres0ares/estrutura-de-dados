@@ -170,9 +170,7 @@ export default {
       let test = JSON.parse(JSON.stringify(array));
 
       let j = 0;
-
-      console.log('animate', test)
-
+      
       function delay(i, updateEdge, size) {
         test[i].value.animate = true;
         updateEdge(test);

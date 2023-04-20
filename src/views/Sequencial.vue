@@ -1,10 +1,19 @@
 <template>
   <div class="main">
-    <SetSeq @update-size-array="createArray" @update-element="updateElement"/>
+    <SetSeq
+      @update-size-array="createArray"
+      @update-element="updateElement"
+      @search-element="get"
+    />
     <div>
       <v-card v-if="array.length > 0" class="pa-4 mt-6" color="#f5f5f5">
-        <div v-for="value, idx in array" class="float-left">
-          <Box type="seq" :value="value" :idx="idx" />
+        <div v-for="(element, idx) in array" class="float-left">
+          <Box
+            type="seq"
+            :value="element.value"
+            :idx="idx"
+            :animate="element.animate"
+          />
         </div>
       </v-card>
     </div>
@@ -12,16 +21,15 @@
 </template>
 
 <script>
-
-import Box from '@/components/Box.vue';
-import SetSeq from '@/components/SetSeq.vue';
+import Box from "@/components/Box.vue";
+import SetSeq from "@/components/SetSeq.vue";
 
 export default {
-  name: 'Sequencial',
+  name: "Sequencial",
   data() {
     return {
       index_array: 0,
-      array: [], 
+      array: [],
     };
   },
   components: {
@@ -32,11 +40,57 @@ export default {
     createArray(size) {
       this.array = [];
       for (let i = 0; i < size; i++)
-        this.array.push('');
+        this.array.push({ value: "null", animate: false });
     },
     updateElement(index, value) {
-      this.array[index] = value;
-    }
+      this.array[index].value = value;
+    },
+    get(option, value) {
+      switch (option) {
+        case "indice": {
+          //animate
+          this.array[value].animate = true;
+          setTimeout(() => {
+            //print value
+            alert(this.array[value].value);
+            //stop animation
+            this.array[value].animate = false;
+          }, 100);
+          break;
+        }
+        case "valor": {
+          let idx = this.array.findIndex((e) => e.value == value);
+          let notFound = idx == -1;
+          idx = notFound ? this.array.length - 1 : idx;
+
+          let j = 0;
+          function delay(i, array, idx) {
+            array[i].animate = true;
+            setTimeout(() => {   
+              array[i].animate = false;         
+              i++;
+              if (i < idx) {
+                delay(i, array, idx);
+              }
+            }, 500);
+          }
+
+          delay(j, this.array, idx+1);
+          setTimeout(() => {
+            if(notFound)
+              alert('Não Encontrado.')
+            else
+              alert(`Encontrado na posição: ${idx}`)
+          }, (idx+1)*500)
+          
+          
+
+          break;
+        }
+        default:
+          break;
+      }
+    },
   },
 };
 </script>
@@ -53,12 +107,9 @@ export default {
   justify-content: center;
   align-items: center;
   background-repeat: repeat;
-
 }
 
 .slider {
   width: 200px;
 }
-
-
 </style>

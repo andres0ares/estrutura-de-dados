@@ -201,6 +201,17 @@ export default {
   cursor: pointer;
 }
 
+@media only screen and (max-width: 600px) {
+  .main-card-sim{
+    top: 5px;
+    right: 5px;
+  }
+  .expand {
+    top: 5px;
+    right: 5px;
+  }
+}
+
 .select-value {
   float: left;
   display: flex;
