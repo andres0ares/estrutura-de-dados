@@ -195,7 +195,6 @@ export default {
       this.expand = !this.expand;
     },
     get() {
-      console.log('here', this.searchOption)
       switch(this.searchOption){
         case 'indice':
           this.$emit("search-element", 'indice', this.index_array)

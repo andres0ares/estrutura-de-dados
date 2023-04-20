@@ -1,6 +1,12 @@
 <template>
   <div class="main">
-    <SetSimEnc @push="push" @edit="edit" @pop="pop" :idxs="nodeArray.length" />
+    <SetSimEnc
+      @push="push"
+      @edit="edit"
+      @pop="pop"
+      @get="get"
+      :idxs="nodeArray.length"
+    />
     <SimEncDisplay :nodes="nodes" :edges="edges" />
   </div>
 </template>
@@ -22,6 +28,7 @@ export default {
       edgeArray2: [],
       nodes: {},
       edges: {},
+      default_delay: 500,
     };
   },
   components: {
@@ -38,7 +45,7 @@ export default {
             : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.add(value, idx);
-        }, wait * 1000);
+        }, wait * this.default_delay);
       } else {
         this.add(value, idx);
       }
@@ -52,7 +59,7 @@ export default {
             : this.nodeArray.length - 1 - idx;
         setTimeout(() => {
           this.deleteItem(idx);
-        }, wait * 1000);
+        }, wait * this.default_delay);
       } else {
         console.log(idx);
       }
@@ -67,10 +74,41 @@ export default {
         setTimeout(() => {
           this.nodeArray[idx].value.icon = value;
           this.updateNode(this.nodeArray);
-        }, wait * 1000);
+        }, wait * this.default_delay);
       } else {
         this.nodeArray[idx].value.icon = value;
         this.updateNode(this.nodeArray);
+      }
+    },
+    get(option, value) {
+      switch (option) {
+        case "indice": {
+          this.animatePath(value);
+          let wait =
+            value < (this.nodeArray.length - 1) / 2
+              ? value
+              : this.nodeArray.length - 1 - value;
+          setTimeout(() => {
+            alert(this.nodeArray[value].value.icon);
+          }, wait * this.default_delay);
+          break;
+        }
+
+        case "valor": {
+          let idx = this.nodeArray.findIndex((e) => e.value.icon == value);
+          let notFound = idx == -1;
+          idx = notFound ? this.nodeArray.length - 1 : idx;
+
+          this.animatePath(idx, true);
+          setTimeout(() => {
+            if (notFound) alert("Não Encontrado.");
+            else alert(`Encontrado na posição: ${idx}`);
+          }, idx * this.default_delay);
+          break;
+        }
+
+        default:
+          break;
       }
     },
     deleteItem(idx) {
@@ -90,15 +128,15 @@ export default {
               this.nodeArray.splice(idx, 1);
               this.updateNode(this.nodeArray);
               this.updateNames();
-            }, 1000);
-          }, 1000);
+            }, this.default_delay);
+          }, this.default_delay);
         } else {
           this.removePath(this.nodeArray[idx - 1].key, this.nodeArray[idx].key);
           setTimeout(() => {
             this.nodeArray.splice(idx, 1);
             this.updateNode(this.nodeArray);
             this.updateNames();
-          }, 1000);
+          }, this.default_delay);
         }
       } else if (this.nodeArray.length > 1) {
         this.removePath(this.nodeArray[idx].key, this.nodeArray[idx + 1].key);
@@ -106,7 +144,7 @@ export default {
           this.nodeArray.splice(idx, 1);
           this.updateNode(this.nodeArray);
           this.updateNames();
-        }, 1000);
+        }, this.default_delay);
       } else {
         this.nodeArray.splice(idx, 1);
         this.updateNode(this.nodeArray);
@@ -138,8 +176,8 @@ export default {
                   this.nodeArray[idx + 1].key
                 );
                 this.updateNames();
-              }, 1000);
-            }, 1000);
+              }, this.default_delay);
+            }, this.default_delay);
           } else {
             this.updateNames();
           }
@@ -150,7 +188,7 @@ export default {
         } else {
           this.updateNames();
         }
-      }, 1000);
+      }, this.default_delay);
     },
     removePath(source, target) {
       let idx = this.edgeArray.findIndex((e) => {
@@ -195,26 +233,25 @@ export default {
       });
       this.updateNode(this.nodeArray);
     },
-    animatePath(idx) {
-      // let test1 = JSON.parse(
-      //   JSON.stringify([...this.edgeArray, ...this.edgeArray2])
-      // );
-      // let test2 = JSON.parse(
-      //   JSON.stringify([...this.edgeArray2, ...this.edgeArray])
-      // );
-      if (idx+1 < this.nodeArray.length) {
+    animatePath(idx, search) {
+      if (idx + 1 < this.nodeArray.length || search) {
+
         let test = this.getEdgeArray();
+        let j;
 
-        let j = idx < (this.nodeArray.length - 1) / 2 ? 0 : test.length / 2;
-
-        idx =
-          idx < (this.nodeArray.length - 1) / 2
-            ? idx
-            : this.nodeArray.length - 1 - idx + j;
+        if (search) {
+          j = 0;
+        } else {
+          j = idx < (this.nodeArray.length - 1) / 2 ? 0 : test.length / 2;
+          idx =
+            idx < (this.nodeArray.length - 1) / 2
+              ? idx
+              : this.nodeArray.length - 1 - idx + j;
+        }
 
         console.log("test", j, idx, test);
 
-        function delay(i, updateEdge, size) {
+        function delay(i, updateEdge, size, delay_time) {
           test[i].value.animate = true;
           updateEdge(test);
           setTimeout(() => {
@@ -225,14 +262,14 @@ export default {
             // console.log(array[i]);
             i++;
             if (i < size) {
-              delay(i, updateEdge, size);
+              delay(i, updateEdge, size, delay_time);
             } else {
               updateEdge([...this.edgeArray, ...this.edgeArray2]);
             }
-          }, 1000);
+          }, delay_time);
         }
 
-        if (idx > 0) delay(j, this.updateEdge, idx);
+        if (idx > 0) delay(j, this.updateEdge, idx, this.default_delay);
       }
     },
     getEdgeArray() {

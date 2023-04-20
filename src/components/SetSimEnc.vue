@@ -92,7 +92,6 @@
       </div>
 
       <div v-else-if="option == 'delete'">
-        <p>delete</p>
         <div v-if="idxs > 0">
           <p class="mt-3">Selecione a posição:</p>
           <v-slider
@@ -114,6 +113,62 @@
             >deletar</v-btn
           >
         </div>
+      </div>
+
+      <div v-else-if="option == 'search'">
+        <p>Pesquisar:</p>
+          <v-btn
+            :variant="searchOption == 'indice' ? 'flat' : 'outlined'"
+            size="small"
+            :color="primary_color"
+            @click="() => (searchOption = 'indice')"
+            >Índice</v-btn
+          >
+          <v-btn
+            class="ml-2"
+            :variant="searchOption == 'valor' ? 'flat' : 'outlined'"
+            size="small"
+            :color="primary_color"
+            @click="() => (searchOption = 'valor')"
+            >Valor</v-btn
+          >
+
+          <div v-if="searchOption == 'indice'">
+            <v-slider
+              v-model="idx_edit"
+              class="slider mt-4"
+              :max="idxs - 1"
+              :min="0"
+              step="1"
+              :color="primary_color"
+            ></v-slider>
+
+            <CodeDisplay :texts="[`print(array[${idx_edit}]);`]" />
+
+            <v-btn @click="get" class="mt-4" size="small" :color="primary_color"
+              >Pesquisar</v-btn
+            >
+          </div>
+          <div v-if="searchOption == 'valor'">
+
+            <p class="text-caption mt-4">selecione o valor:</p>
+            <div class="select-group mb-2">
+              <div
+                v-for="item in values"
+                :id="item"
+                @click="handleClick"
+                class="select-value"
+              >
+                {{ item }}
+              </div>
+            </div>
+
+            <CodeDisplay :texts="[`for(int i = 0; i < tamanho_array; i++) {`,`&emsp;if(array[i] == ${value}) {`, `&emsp;&emsp;print('Encontrado na posição: ' + i);`, '&emsp;&emsp;break;', '&emsp;}',`&emsp;if(i == tamanho_array-1) {`,`&emsp;&emsp;print('Não encontrado.');`,'&emsp;}', '}']" />
+
+            <v-btn @click="get" class="mt-4" size="small" :color="primary_color"
+              >Pesquisar</v-btn
+            >
+          </div>
       </div>
     </v-card>
     <div v-else class="expand" @click="toggleExpand">
@@ -137,6 +192,7 @@ export default {
       options: [{id: 'add', icon: 'mdi-plus'}, {id: 'edit', icon: 'mdi-pencil'}, {id: 'delete', icon: 'mdi-delete'}, {id: 'search', icon: 'mdi-magnify'}],
       value: "💎",
       values: ["💎", "💣", "null"],
+      searchOption: "indice",
     };
   },
   props: {
@@ -171,6 +227,19 @@ export default {
     deletar() {
       this.$emit("pop", this.idx_edit);
     },
+    get() {
+      switch(this.searchOption){
+        case 'indice':
+          this.$emit("get", 'indice', this.idx_edit)
+          break
+        case 'valor':
+          this.$emit("get", 'valor', this.value)
+          break
+        default: 
+          break
+      }
+      
+    }
   },
 };
 </script>
