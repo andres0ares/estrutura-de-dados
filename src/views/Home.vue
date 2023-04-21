@@ -24,20 +24,19 @@
   </div>
 </template>
 
-<script>
-export default {
-  methods: {
-    openSequencial() {
-      this.$router.push({ path: "/sequencial" });
-    },
-    openSimplesmenteEncadeada() {
-      this.$router.push({ path: "/simplesmente-encadeada" });
-    },
-    openDuplamenteEncadeada() {
-      this.$router.push({ path: "/duplamente-encadeada" });
-    },
-  },
-};
+<script setup>
+
+import router from '@/router';
+
+function openSequencial() {
+  router.push({ path: "/sequencial" });
+}
+function openSimplesmenteEncadeada() {
+  router.push({ path: "/simplesmente-encadeada" });
+}
+function openDuplamenteEncadeada() {
+  router.push({ path: "/duplamente-encadeada" });
+}
 </script>
 
 <style scoped>

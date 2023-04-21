@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import SetSimEnc from "@/components/SetSimEnc.vue";
-import SimEncDisplay from "@/components/SimEncDisplay.vue";
+import SetSimEnc from "@/components/ConfigEncadeada.vue";
+import SimEncDisplay from "@/components/ListArrowDisplay.vue";
 
 export default {
   data() {

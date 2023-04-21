@@ -1,8 +1,8 @@
 <template>
   <div class="main">
-    <SetSeq
-      @update-size-array="createArray"
-      @update-element="updateElement"
+    <ConfigSequencial
+      @update-size-array="create"
+      @update-element="put"
       @search-element="get"
     />
     <div>
@@ -20,79 +20,73 @@
   </div>
 </template>
 
-<script>
+<script setup>
+//components
 import Box from "@/components/Box.vue";
-import SetSeq from "@/components/SetSeq.vue";
+import ConfigSequencial from "@/components/ConfigSequencial.vue";
+import { ref } from "vue";
 
-export default {
-  name: "Sequencial",
-  data() {
-    return {
-      index_array: 0,
-      array: [],
-    };
-  },
-  components: {
-    Box,
-    SetSeq,
-  },
-  methods: {
-    createArray(size) {
-      this.array = [];
-      for (let i = 0; i < size; i++)
-        this.array.push({ value: "null", animate: false });
-    },
-    updateElement(index, value) {
-      this.array[index].value = value;
-    },
-    get(option, value) {
-      switch (option) {
-        case "indice": {
-          //animate
-          this.array[value].animate = true;
-          setTimeout(() => {
-            //print value
-            alert(this.array[value].value);
-            //stop animation
-            this.array[value].animate = false;
-          }, 100);
-          break;
-        }
-        case "valor": {
-          let idx = this.array.findIndex((e) => e.value == value);
-          let notFound = idx == -1;
-          idx = notFound ? this.array.length - 1 : idx;
+const array = ref([]);
 
-          let j = 0;
-          function delay(i, array, idx) {
-            array[i].animate = true;
-            setTimeout(() => {   
-              array[i].animate = false;         
-              i++;
-              if (i < idx) {
-                delay(i, array, idx);
-              }
-            }, 500);
+//CRUD list
+function create(size) {
+  array.value = [];
+  for (let i = 0; i < size; i++)
+    array.value.push({ value: "null", animate: false });
+}
+
+function put(index, value) {
+  array.value[index].value = value;
+}
+
+function get(option, value) {
+  switch (option) {
+    //search by idx
+    case "indice": {
+      //animate
+      array.value[value].animate = true;
+      setTimeout(() => {
+        //print value
+        alert(array.value[value].value);
+        //stop animation
+        array.value[value].animate = false;
+      }, 100);
+      break;
+    }
+    //search by value
+    case "valor": {
+      //find first index 
+      let idx = array.value.findIndex((e) => e.value == value);
+      let notFound = idx == -1;
+      idx = notFound ? array.value.length - 1 : idx;
+
+      //display animation
+      let j = 0;
+      function delay(i, array, idx) {
+        array[i].animate = true;
+        setTimeout(() => {
+          array[i].animate = false;
+          i++;
+          if (i < idx) {
+            delay(i, array, idx);
           }
-
-          delay(j, this.array, idx+1);
-          setTimeout(() => {
-            if(notFound)
-              alert('Não Encontrado.')
-            else
-              alert(`Encontrado na posição: ${idx}`)
-          }, (idx+1)*500)
-          
-          
-
-          break;
-        }
-        default:
-          break;
+        }, 500);
       }
-    },
-  },
-};
+
+      delay(j, array.value, idx + 1);
+
+      //alert value
+      setTimeout(() => {
+        if (notFound) alert("Não Encontrado.");
+        else alert(`Encontrado na posição: ${idx}`);
+      }, (idx + 1) * 500);
+
+      break;
+    }
+    default:
+      break;
+  }
+}
 </script>
 
 <style scoped>

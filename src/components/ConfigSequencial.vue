@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-card v-if="setArray" class="pa-4 border-1" max-width="374" color="#ECEFF1">
+    <v-card
+      v-if="setArray"
+      class="pa-4 border-1"
+      max-width="374"
+      color="#ECEFF1"
+    >
       <v-card-title> Lista Sequencial </v-card-title>
 
       <p class="mt-3">Selecione o tamanho da lista:</p>
@@ -15,11 +20,7 @@
 
       <CodeDisplay :texts="[`var array[${size_array}];`]" />
 
-      <v-btn
-        size="small"
-        @click="handleTest"
-        :color="default_color"
-        class="mt-2"
+      <v-btn size="small" @click="create" :color="default_color" class="mt-2"
         >iniciar</v-btn
       >
     </v-card>
@@ -64,16 +65,16 @@
           ></v-slider>
 
           <p class="text-caption mt-n2">selecione o valor:</p>
-            <div class="select-group mb-2">
-              <div
-                v-for="item in values"
-                :id="item"
-                @click="handleClickValue"
-                class="select-value"
-              >
-                {{ item }}
-              </div>
+          <div class="select-group mb-2">
+            <div
+              v-for="item in values"
+              :id="item"
+              @click="handleClickValue"
+              class="select-value"
+            >
+              {{ item }}
             </div>
+          </div>
 
           <CodeDisplay :texts="[`array[${index_array}] = ${value};`]" />
 
@@ -121,7 +122,6 @@
             >
           </div>
           <div v-if="searchOption == 'valor'">
-
             <p class="text-caption mt-4">selecione o valor:</p>
             <div class="select-group mb-2">
               <div
@@ -134,7 +134,19 @@
               </div>
             </div>
 
-            <CodeDisplay :texts="[`for(int i = 0; i < tamanho_array; i++) {`,`&emsp;if(array[i] == ${value}) {`, `&emsp;&emsp;print('Encontrado na posição: ' + i);`, '&emsp;&emsp;break;', '&emsp;}',`&emsp;if(i == tamanho_array-1) {`,`&emsp;&emsp;print('Não encontrado.');`,'&emsp;}', '}']" />
+            <CodeDisplay
+              :texts="[
+                `for(int i = 0; i < tamanho_array; i++) {`,
+                `&emsp;if(array[i] == ${value}) {`,
+                `&emsp;&emsp;print('Encontrado na posição: ' + i);`,
+                '&emsp;&emsp;break;',
+                '&emsp;}',
+                `&emsp;if(i == tamanho_array-1) {`,
+                `&emsp;&emsp;print('Não encontrado.');`,
+                '&emsp;}',
+                '}',
+              ]"
+            />
 
             <v-btn @click="get" class="mt-4" size="small" :color="primary_color"
               >Pesquisar</v-btn
@@ -149,66 +161,81 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
+
 import CodeDisplay from "./CodeDisplay.vue";
 
-export default {
-  data() {
-    return {
-      size_array: 5,
-      index_array: 5,
-      value: "💎",
-      values: ["💎", "💣", "null"],
-      setArray: true,
-      selection: "",
-      default_color: "blue-grey-darken-4",
-      primary_color: "blue-grey-darken-4",
-      secondary_color: "#f5470b",
-      expand: true,
-      option: "edit",
-      options: [
-        { id: "edit", icon: "mdi-pencil" },
-        { id: "search", icon: "mdi-magnify" },
-      ],
-      searchOption: "indice",
-    };
-  },
-  components: {
-    CodeDisplay,
-  },
-  methods: {
-    handleTest() {
-      this.$emit("update-size-array", this.size_array);
-      this.setArray = false;
-    },
-    handleClickValue(e) {
-      this.value = e.currentTarget.id;
-    },
-    sendUpdate(e) {
-      if (this.value != undefined)
-        this.$emit("update-element", this.index_array, this.value);
-    },
-    handleClickOption(e) {
-      this.option = e.currentTarget.id;
-    },
-    toggleExpand() {
-      this.expand = !this.expand;
-    },
-    get() {
-      switch(this.searchOption){
-        case 'indice':
-          this.$emit("search-element", 'indice', this.index_array)
-          break
-        case 'valor':
-          this.$emit("search-element", 'valor', this.value)
-          break
-        default: 
-          break
-      }
-      
-    }
-  },
-};
+const emit = defineEmits([
+  "update-size-array",
+  "update-element",
+  "search-element",
+]);
+
+// CONST
+const values = ["🎲", "💎", "🌍", "🌱", "💩", "📝", "null"];
+const default_color = "blue-grey-darken-4";
+const primary_color = "blue-grey-darken-4";
+const options = [
+  { id: "edit", icon: "mdi-pencil" },
+  { id: "search", icon: "mdi-magnify" },
+];
+
+// VARS
+const index_array = ref(5); //idx value
+const expand = ref(true); //toggle expand button
+const option = ref("edit"); //toggle option
+
+/***************** CRUD *******************/
+
+//CREATE
+
+const size_array = ref(5);
+const setArray = ref(true);
+
+function create() {
+  emit("update-size-array", size_array.value);
+  setArray.value = false;
+}
+
+//UPDATE
+
+const value = ref("💎");
+
+function handleClickValue(e) {
+  value.value = e.currentTarget.id;
+}
+
+function sendUpdate(e) {
+  if (value.value != undefined)
+    emit("update-element", index_array.value, value.value);
+}
+
+// READ
+
+const searchOption = ref("indice");
+
+function handleClickOption(e) {
+  //search by idx or value
+  option.value = e.currentTarget.id;
+}
+
+function get() {
+  switch (searchOption.value) {
+    case "indice":
+      emit("search-element", "indice", index_array.value);
+      break;
+    case "valor":
+      emit("search-element", "valor", value.value);
+      break;
+    default:
+      break;
+  }
+}
+
+function toggleExpand() {
+  expand.value = !expand.value;
+}
 </script>
 
 <style scoped>
@@ -241,7 +268,7 @@ export default {
 }
 
 @media only screen and (max-width: 600px) {
-  .main-card-sim{
+  .main-card-sim {
     top: 5px;
     right: 5px;
   }
