@@ -28,6 +28,11 @@ const routes = [
         path: '/duplamente-encadeada',
         name: 'Duplamente Encadeada',
         component: () => import('@/views/DuplamenteEncadeada.vue'),
+      },
+      {
+        path: '/pilha-sequencial',
+        name: 'Pilha Sequencial',
+        component: () => import('@/views/PilhaSequencial.vue'),
       }
     ],
   },

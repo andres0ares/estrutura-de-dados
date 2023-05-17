@@ -16,6 +16,10 @@
       <p>Lista Duplamente Encadeada</p>
     </div>
 
+    <div @click="openPilhaSequencial" class="card-list">
+      <p>Pilha Sequencial</p>
+    </div>
+
     <div class="mt-4">
       <v-btn icon="mdi-github" color="orange-darken-4"></v-btn>
       <v-btn icon="mdi-linkedin" class="mx-3" color="orange-darken-4"></v-btn>
@@ -36,6 +40,9 @@ function openSimplesmenteEncadeada() {
 }
 function openDuplamenteEncadeada() {
   router.push({ path: "/duplamente-encadeada" });
+}
+function openPilhaSequencial() {
+  router.push({ path: "/pilha-sequencial"});
 }
 </script>
 
