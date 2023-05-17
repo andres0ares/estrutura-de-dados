@@ -16,21 +16,13 @@
 </template>
 
 <script>
-import { ref } from "vue";
 export default {
   name: "PilhaBox",
   props: {
     idx: Number,
     value: String,
     isTop: Boolean,
-  },
-  setup() {
-    const test = ref("box");
-
-    return {
-      test,
-    };
-  },
+  }
 };
 </script>
 

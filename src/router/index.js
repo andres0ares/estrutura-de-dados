@@ -33,6 +33,11 @@ const routes = [
         path: '/pilha-sequencial',
         name: 'Pilha Sequencial',
         component: () => import('@/views/PilhaSequencial.vue'),
+      },
+      {
+        path: '/fila-sequencial',
+        name: 'Fila Sequencial',
+        component: () => import('@/views/FilaSequencial.vue'),
       }
     ],
   },

@@ -20,6 +20,10 @@
       <p>Pilha Sequencial</p>
     </div>
 
+    <div @click="openfilaSequencial" class="card-list">
+      <p>Fila Sequencial (FIFO)</p>
+    </div>
+
     <div class="mt-4">
       <v-btn icon="mdi-github" color="orange-darken-4"></v-btn>
       <v-btn icon="mdi-linkedin" class="mx-3" color="orange-darken-4"></v-btn>
@@ -43,6 +47,9 @@ function openDuplamenteEncadeada() {
 }
 function openPilhaSequencial() {
   router.push({ path: "/pilha-sequencial"});
+}
+function openfilaSequencial() {
+  router.push({ path: "/fila-sequencial"});
 }
 </script>
 
