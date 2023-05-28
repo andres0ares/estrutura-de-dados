@@ -24,6 +24,10 @@
       <p>Fila Sequencial (FIFO)</p>
     </div>
 
+    <div @click="openArvore" class="card-list">
+      <p>Árvore Binária de Pesquisa (dev)</p>
+    </div>
+
     <div class="mt-4">
       <v-btn icon="mdi-github" color="orange-darken-4"></v-btn>
       <v-btn icon="mdi-linkedin" class="mx-3" color="orange-darken-4"></v-btn>
@@ -50,6 +54,9 @@ function openPilhaSequencial() {
 }
 function openfilaSequencial() {
   router.push({ path: "/fila-sequencial"});
+}
+function openArvore() {
+  router.push({ path: "/arvore-binaria-pesquisa"});
 }
 </script>
 

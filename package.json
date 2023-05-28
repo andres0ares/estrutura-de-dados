@@ -11,6 +11,8 @@
   "dependencies": {
     "@mdi/font": "7.0.96",
     "core-js": "^3.8.3",
+    "d3-force": "^3.0.0",
+    "dagre": "^0.8.5",
     "roboto-fontface": "*",
     "v-network-graph": "^0.9.1",
     "vue": "^3.2.13",
@@ -19,6 +21,7 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@types/dagre": "^0.7.48",
     "@vitejs/plugin-vue": "^3.0.3",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",

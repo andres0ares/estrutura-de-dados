@@ -38,6 +38,11 @@ const routes = [
         path: '/fila-sequencial',
         name: 'Fila Sequencial',
         component: () => import('@/views/FilaSequencial.vue'),
+      },
+      {
+        path: '/arvore-binaria-pesquisa',
+        name: 'Árvore Binária de Pesquisa',
+        component: () => import('@/views/ArvoreBinariaPesquisa.vue'),
       }
     ],
   },
