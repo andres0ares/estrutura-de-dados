@@ -25,7 +25,7 @@
     </div>
 
     <div @click="openArvore" class="card-list">
-      <p>Árvore Binária de Pesquisa (dev)</p>
+      <p>Árvore Binária de Pesquisa</p>
     </div>
 
     <div class="mt-4">

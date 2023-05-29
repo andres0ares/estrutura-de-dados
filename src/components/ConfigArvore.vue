@@ -64,7 +64,7 @@
 
           <v-slider v-model="value" thumb-label="always" :step="1"></v-slider>
 
-          <CodeDisplay :texts="[`fila.push(${value});`]" />
+          <CodeDisplay :texts="[`arvore.insere(raiz, ${value});`]" />
 
           <v-btn
             @click="sendUpdate"
@@ -111,44 +111,44 @@
 
           <!-- ========== encaminhamentos ========== -->
           <div v-if="editOption == 'encaminhamentos'">
-            <p class="text-caption">Remover item da fila</p>
-
-            <CodeDisplay :texts="[`fila.pop();`]" />
-
+            <p class="text-caption">Percorre pré-ordem</p>
+            <CodeDisplay :texts="[`arvore.preOrdem(raiz);`]" />
             <v-btn
-              @click="pop"
+              @click="preOrdem"
               class="mt-4"
               variant="outlined"
               size="small"
               :color="orange"
-              >Remover</v-btn
+              >preordem</v-btn
             >
 
             <v-divider class="mt-4 mb-2"></v-divider>
 
-            <p class="text-caption">Remover e exibir item da fila</p>
-            <CodeDisplay :texts="[`print(fila.pop());`]" />
+            <p class="text-caption">Percorre em ordem</p>
+
+            <CodeDisplay :texts="[`arvore.emOrdem(raiz);`]" />
+
             <v-btn
-              @click="popE"
+              @click="emOrdem"
               class="mt-4"
               variant="outlined"
               size="small"
               :color="orange"
-              >Remover e Exibir</v-btn
+              >inordem</v-btn
             >
 
             <v-divider class="mt-4 mb-2"></v-divider>
 
-            <p class="text-caption">Exibir item no início da fila</p>
-            <CodeDisplay :texts="[`print(fila.inicio());`]" />
+            <p class="text-caption">Percorre pós-ordem</p>
+            <CodeDisplay :texts="[`arvore.posOrdem(raiz);`]" />
             <v-btn
-              @click="top"
+              @click="posOrdem"
               class="mt-4"
               variant="outlined"
               size="small"
               :color="orange"
-              >Mostrar início</v-btn
-            >
+              >posordem</v-btn
+            >            
           </div>
         </div>
       </v-card>
@@ -164,7 +164,7 @@ import { ref } from "vue";
 
 import CodeDisplay from "./CodeDisplay.vue";
 
-const emit = defineEmits(["size", "push", "pop", "search", "init", "add"]);
+const emit = defineEmits(["size", "push", "pop", "search", "init", "add","preOrdem", "emOrdem", "posOrdem"]);
 // CONST
 //const values = ["🎲", "💎", "🌍", "🌱", "💩", "📝"];
 const default_color = "blue-grey-darken-4";
@@ -178,7 +178,6 @@ const options = [
 const editOptions = ["pesquisar", "encaminhamentos"];
 
 // VARS
-const index_array = ref(5); //idx value
 const expand = ref(true); //toggle expand button
 const option = ref("add"); //toggle option
 const editOption = ref("pesquisar");
@@ -213,8 +212,16 @@ function sendUpdate() {
   if (value.value != undefined) emit("add", value.value);
 }
 
-function handleClickValue(e) {
-  value.value = e.currentTarget.id;
+function preOrdem() {
+  emit("preOrdem");
+}
+
+function emOrdem() {
+  emit("emOrdem");
+}
+
+function posOrdem() {
+  emit("posOrdem");
 }
 
 function handleClickOption(e) {
@@ -231,17 +238,6 @@ function toggleExpand() {
   expand.value = !expand.value;
 }
 
-function pop() {
-  emit("pop", false);
-}
-
-function popE() {
-  emit("pop", true);
-}
-
-function top() {
-  emit("top");
-}
 </script>
 
 <style scoped>

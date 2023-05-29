@@ -42,6 +42,19 @@ const configs = {
       visible: false,
     },
   },
+  edge: {
+    normal: {
+      color: "#f5470b",
+    },
+  },
+  path: {
+    margin: 10,
+    visible: true,
+    curveInNode: true,
+    normal: {
+      width: 70,
+    },
+  },
 };
 </script>
 

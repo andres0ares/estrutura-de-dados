@@ -4,6 +4,9 @@
       @init="init"
       @search="findValue"
       @add="add"
+      @emOrdem="emOrdem"
+      @posOrdem="posOrdem"
+      @preOrdem="preOrdem"
       :values="values"
     />
     <DisplayArvore v-if="main" :nodes="nodes" :edges="edges" />
@@ -52,10 +55,99 @@ export default {
     function updateEdges(values) {
       edges.value = {};
       values.value.forEach((el, idx) => {
-      el.edges.forEach((e, i) => {
-        edges.value[`${idx}${i}`] = e;
+        el.edges.forEach((e, i) => {
+          edges.value[`${idx}${i}`] = e;
+        });
       });
-      });      
+    }
+
+    function getNextNo(id) {
+      let idx = tree.value.findIndex((e) => e.id == id);
+      return tree.value[idx];
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    const exibe = ref([]);
+    async function encaminhaPreOrdem(no) {
+      exibe.value.push(no.value);
+      nodes.value[no.id].color = "#f5470b";
+      await sleep(time_delay);
+      nodes.value[no.id].color = "#f5f5f5";
+
+      //await sleep(time_delay);
+
+      if (no == undefined) return;
+
+      if (no.left != undefined) await encaminhaPreOrdem(getNextNo(no.left));
+
+      if (no.right != undefined) await encaminhaPreOrdem(getNextNo(no.right));
+    }
+
+
+
+    async function encaminhaEmOrdem(no) {
+      nodes.value[no.id].color = "#BDBDBD";
+
+      await sleep(time_delay);
+
+      if (no == undefined) return;
+
+      if (no.left != undefined) await encaminhaEmOrdem(getNextNo(no.left));
+
+      exibe.value.push(no.value);
+      nodes.value[no.id].color = "#f5470b";
+      await sleep(time_delay);
+      nodes.value[no.id].color = "#f5f5f5";
+
+      if (no.right != undefined) await encaminhaEmOrdem(getNextNo(no.right));
+    }
+
+    async function encaminhaPosOrdem(no) {
+      nodes.value[no.id].color = "#BDBDBD";
+
+      await sleep(time_delay);
+
+      if (no == undefined) return;
+
+      if (no.left != undefined) await encaminhaPosOrdem(getNextNo(no.left));
+
+      if (no.right != undefined) await encaminhaPosOrdem(getNextNo(no.right));
+
+      exibe.value.push(no.value);
+      nodes.value[no.id].color = "#f5470b";
+      await sleep(time_delay);
+      nodes.value[no.id].color = "#f5f5f5";
+    }
+
+    function preOrdem() {
+      exibe.value = [];
+      encaminhaPreOrdem(tree.value[0]).then((_) => {
+        alert(exibe.value);
+        updateRootColor()
+      });
+    }
+
+    function emOrdem() {
+      exibe.value = [];
+      encaminhaEmOrdem(tree.value[0]).then((_) => {
+        alert(exibe.value);
+        updateRootColor()
+      });
+    }
+
+    function posOrdem() {
+      exibe.value = [];
+      encaminhaPosOrdem(tree.value[0]).then((_) => {
+        alert(exibe.value);
+        updateRootColor()
+      });
+    }
+
+    function updateRootColor () {
+      nodes.value[tree.value[0].id].color = "#FFCC80";
     }
 
     function addNewValue(value, time) {
@@ -88,6 +180,7 @@ export default {
                   });
                   updateNodes(tree);
                   updateEdges(tree);
+                  updateRootColor()
                 }
               } else {
                 let idx = tree.value.findIndex((e) => e.id == no.left);
@@ -110,6 +203,7 @@ export default {
                   });
                   updateNodes(tree);
                   updateEdges(tree);
+                  updateRootColor()
                 }
               }
               nodes.value[no.id].color = "#f5f5f5";
@@ -120,7 +214,7 @@ export default {
           tree.value.push({
             id: "1",
             value: value,
-            color: "#f5f5f5",
+            color: "#FFCC80",
             left: undefined,
             right: undefined,
             edges: [],
@@ -128,8 +222,7 @@ export default {
           updateNodes(tree);
           updateEdges(tree);
         }
-        
-      }else{
+      } else {
         alert("Número já adicionado!");
       }
     }
@@ -146,12 +239,18 @@ export default {
               let idx = tree.value.findIndex((e) => e.id == no.right);
               if (idx >= 0)
                 delay(value, tree.value[idx], nodes, tree, delay_time);
-              else alert("Nó não encontrado.");
+              else{
+                alert("Nó não encontrado.");
+                updateRootColor()
+              } 
             } else {
               let idx = tree.value.findIndex((e) => e.id == no.left);
               if (idx >= 0)
                 delay(value, tree.value[idx], nodes, tree, delay_time);
-              else alert("Nó não encontrado.");
+              else {
+                alert("Nó não encontrado.");
+                updateRootColor()
+              } 
             }
             nodes.value[no.id].color = "#f5f5f5";
           } else {
@@ -159,6 +258,7 @@ export default {
             alert(
               `Nó encontrado: {valor: ${value}, filhoEsquerda: ${no.left}, filhoDireita: ${no.right}}`
             );
+            updateRootColor()
           }
         }, delay_time);
       }
@@ -170,7 +270,7 @@ export default {
       addNewValue(value, time_delay);
     }
 
-    //findValue(35)
+    
 
     return {
       nodes,
@@ -180,6 +280,9 @@ export default {
       init,
       findValue,
       add,
+      emOrdem,
+      posOrdem,
+      preOrdem,
     };
   },
 };
